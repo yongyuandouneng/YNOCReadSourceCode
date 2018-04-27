@@ -44,39 +44,48 @@ typedef NS_OPTIONS(NSUInteger, SDWebImageDownloaderOptions) {
      * Handles cookies stored in NSHTTPCookieStore by setting 
      * NSMutableURLRequest.HTTPShouldHandleCookies = YES;
      */
+    // 设置 NSMutableURLRequest.HTTPShouldHandleCookies = YES
+    // 从而处理存储在 NSHTTPCookieStore 的 cookie
     SDWebImageDownloaderHandleCookies = 1 << 5,
 
     /**
      * Enable to allow untrusted SSL certificates.
      * Useful for testing purposes. Use with caution in production.
      */
+    // 允许使用不受信的 SSL 证书
+    // 主要用于测试
+    // 常用在开发环境下
     SDWebImageDownloaderAllowInvalidSSLCertificates = 1 << 6,
 
     /**
      * Put the image in the high priority queue.
      */
+    // 图片放在优先级更高的队列中
     SDWebImageDownloaderHighPriority = 1 << 7,
 };
-
+/// 操作队列顺序
 typedef NS_ENUM(NSInteger, SDWebImageDownloaderExecutionOrder) {
     /**
      * Default value. All download operations will execute in queue style (first-in-first-out).
      */
+    // 先进先出 默认操作顺序
     SDWebImageDownloaderFIFOExecutionOrder,
 
     /**
      * All download operations will execute in stack style (last-in-first-out).
      */
+    // 后进先出
     SDWebImageDownloaderLIFOExecutionOrder
 };
-
+/// 开始下载通知
 extern NSString *const SDWebImageDownloadStartNotification;
+/// 停止下载通知
 extern NSString *const SDWebImageDownloadStopNotification;
-
+/// 下载进度回调
 typedef void(^SDWebImageDownloaderProgressBlock)(NSInteger receivedSize, NSInteger expectedSize);
-
+/// 下载完成回调
 typedef void(^SDWebImageDownloaderCompletedBlock)(UIImage *image, NSData *data, NSError *error, BOOL finished);
-
+/// 下载请求HEADERS过滤
 typedef NSDictionary *(^SDWebImageDownloaderHeadersFilterBlock)(NSURL *url, NSDictionary *headers);
 
 /**
@@ -88,6 +97,7 @@ typedef NSDictionary *(^SDWebImageDownloaderHeadersFilterBlock)(NSURL *url, NSDi
  * Decompressing images that are downloaded and cached can improve performance but can consume lot of memory.
  * Defaults to YES. Set this to NO if you are experiencing a crash due to excessive memory consumption.
  */
+/// 图片是否需要解码
 @property (assign, nonatomic) BOOL shouldDecompressImages;
 
 @property (assign, nonatomic) NSInteger maxConcurrentDownloads;
@@ -119,6 +129,7 @@ typedef NSDictionary *(^SDWebImageDownloaderHeadersFilterBlock)(NSURL *url, NSDi
 /**
  *  Set the default URL credential to be set for request operations.
  */
+/// 认证信息
 @property (strong, nonatomic) NSURLCredential *urlCredential;
 
 /**

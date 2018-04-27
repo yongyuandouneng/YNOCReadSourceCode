@@ -8,20 +8,24 @@
 
 #import "SDWebImageManager.h"
 #import <objc/message.h>
-
+/// combinedOperation对象
 @interface SDWebImageCombinedOperation : NSObject <SDWebImageOperation>
-
+/// 是否已经取消
 @property (assign, nonatomic, getter = isCancelled) BOOL cancelled;
+/// cancelBlock call back
 @property (copy, nonatomic) SDWebImageNoParamsBlock cancelBlock;
+/// 缓存操作线程
 @property (strong, nonatomic) NSOperation *cacheOperation;
 
 @end
 
 @interface SDWebImageManager ()
-
+/// readwrite 两个对象单例
 @property (strong, nonatomic, readwrite) SDImageCache *imageCache;
 @property (strong, nonatomic, readwrite) SDWebImageDownloader *imageDownloader;
+/// 失败urls数组
 @property (strong, nonatomic) NSMutableSet *failedURLs;
+/// 正在跑的操作线程
 @property (strong, nonatomic) NSMutableArray *runningOperations;
 
 @end
@@ -38,6 +42,7 @@
 }
 
 - (instancetype)init {
+    /// 初始化两个单例对象
     SDImageCache *cache = [SDImageCache sharedImageCache];
     SDWebImageDownloader *downloader = [SDWebImageDownloader sharedDownloader];
     return [self initWithCache:cache downloader:downloader];
@@ -112,15 +117,25 @@
     }];
 }
 
+/**
+ 下载方法
+
+ @param url 下载地址
+ @param options 下载操作选项
+ @param progressBlock 进度回调
+ @param completedBlock 完成回调
+ @return 返回 SDWebImageOperation
+ */
 - (id <SDWebImageOperation>)downloadImageWithURL:(NSURL *)url
                                          options:(SDWebImageOptions)options
                                         progress:(SDWebImageDownloaderProgressBlock)progressBlock
                                        completed:(SDWebImageCompletionWithFinishedBlock)completedBlock {
     // Invoking this method without a completedBlock is pointless
     NSAssert(completedBlock != nil, @"If you mean to prefetch the image, use -[SDWebImagePrefetcher prefetchURLs] instead");
-
+    
     // Very common mistake is to send the URL using NSString object instead of NSURL. For some strange reason, XCode won't
     // throw any warning for this type mismatch. Here we failsafe this error by allowing URLs to be passed as NSString.
+    /// 检查URL
     if ([url isKindOfClass:NSString.class]) {
         url = [NSURL URLWithString:(NSString *)url];
     }
@@ -129,12 +144,14 @@
     if (![url isKindOfClass:NSURL.class]) {
         url = nil;
     }
-
+    /// 操作线程
     __block SDWebImageCombinedOperation *operation = [SDWebImageCombinedOperation new];
+    /// 解除引用循环
     __weak SDWebImageCombinedOperation *weakOperation = operation;
 
     BOOL isFailedUrl = NO;
     @synchronized (self.failedURLs) {
+        /// 判断是否是失败的Url
         isFailedUrl = [self.failedURLs containsObject:url];
     }
     /// 记录错误的 url 直接回调出去
@@ -150,7 +167,7 @@
         [self.runningOperations addObject:operation];
     }
     NSString *key = [self cacheKeyForURL:url];
-    /// 缓存操作队列
+    /// 缓存操作队列 去查询内存和缓存中的图片
     operation.cacheOperation = [self.imageCache queryDiskCacheForKey:key done:^(UIImage *image, SDImageCacheType cacheType) { /// 查询内存和硬盘缓存
         if (operation.isCancelled) {
             @synchronized (self.runningOperations) {
@@ -183,7 +200,7 @@
                 // ignore image read from NSURLCache if image if cached but force refreshing
                 downloaderOptions |= SDWebImageDownloaderIgnoreCachedResponse;
             }
-            /// 调用 imageDownloader 进行下载   subOperation  是下载队列
+            /// 调用 SDImageDownloader 进行下载   subOperation  是下载队列
             id <SDWebImageOperation> subOperation = [self.imageDownloader downloadImageWithURL:url options:downloaderOptions progress:progressBlock completed:^(UIImage *downloadedImage, NSData *data, NSError *error, BOOL finished) {
                 __strong __typeof(weakOperation) strongOperation = weakOperation;
                 if (!strongOperation || strongOperation.isCancelled) {
@@ -217,22 +234,25 @@
                             [self.failedURLs removeObject:url];
                         }
                     }
-                    
+                    // 查看是否使用了 仅内存存储 策略
                     BOOL cacheOnDisk = !(options & SDWebImageCacheMemoryOnly);
-
+                    
                     if (options & SDWebImageRefreshCached && image && !downloadedImage) {
                         // Image refresh hit the NSURLCache cache, do not call the completion block
+                    
                     }
+                    // 如果下载成功，并且成功捕获代理方法，则需要对图片进行转换
                     else if (downloadedImage && (!downloadedImage.images || (options & SDWebImageTransformAnimatedImage)) && [self.delegate respondsToSelector:@selector(imageManager:transformDownloadedImage:withURL:)]) {
+                        // 全局队列中，异步操作
                         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
                             UIImage *transformedImage = [self.delegate imageManager:self transformDownloadedImage:downloadedImage withURL:url];
-
+                            // 询问代理是否要在 image 存储到缓存之前做最后的图片编号操作（缩放、剪切、圆角等）
                             if (transformedImage && finished) {
                                 BOOL imageWasTransformed = ![transformedImage isEqual:downloadedImage];
                                 /// 缓存转换的图片
                                 [self.imageCache storeImage:transformedImage recalculateFromImage:imageWasTransformed imageData:(imageWasTransformed ? nil : data) forKey:key toDisk:cacheOnDisk];
                             }
-
+                            // call back completedBlock
                             dispatch_main_sync_safe(^{
                                 if (strongOperation && !strongOperation.isCancelled) {
                                     completedBlock(transformedImage, nil, SDImageCacheTypeNone, finished, url);

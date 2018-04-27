@@ -283,7 +283,7 @@ didReceiveResponse:(NSURLResponse *)response
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data {
     [self.imageData appendData:data];
-
+    /// 计算渐进式显示图片
     if ((self.options & SDWebImageDownloaderProgressiveDownload) && self.expectedSize > 0 && self.completedBlock) {
         // The following code is from http://www.cocoaintheshell.com/2011/05/progressive-images-download-imageio/
         // Thanks to the author @Nyx0uf

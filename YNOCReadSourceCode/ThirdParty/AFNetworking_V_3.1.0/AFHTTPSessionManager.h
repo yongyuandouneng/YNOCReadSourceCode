@@ -72,12 +72,13 @@
  */
 
 NS_ASSUME_NONNULL_BEGIN
-
+/// AFHTTPSessionManager 继承 AFURLSessionManager
 @interface AFHTTPSessionManager : AFURLSessionManager <NSSecureCoding, NSCopying>
 
 /**
  The URL used to construct requests from relative paths in methods like `requestWithMethod:URLString:parameters:`, and the `GET` / `POST` / et al. convenience methods.
  */
+/// 公共base url
 @property (readonly, nonatomic, strong, nullable) NSURL *baseURL;
 
 /**
@@ -85,6 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @warning `requestSerializer` must not be `nil`.
  */
+/// 请求序列化
 @property (nonatomic, strong) AFHTTPRequestSerializer <AFURLRequestSerialization> * requestSerializer;
 
 /**
@@ -92,6 +94,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @warning `responseSerializer` must not be `nil`.
  */
+/// 结果序列化
 @property (nonatomic, strong) AFHTTPResponseSerializer <AFURLResponseSerialization> * responseSerializer;
 
 ///---------------------
@@ -101,6 +104,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Creates and returns an `AFHTTPSessionManager` object.
  */
+/// 创建一个AFHTTPSessionManager对象，不是单例
 + (instancetype)manager;
 
 /**
@@ -139,6 +143,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @see -dataTaskWithRequest:completionHandler:
  */
+/// GET
 - (nullable NSURLSessionDataTask *)GET:(NSString *)URLString
                    parameters:(nullable id)parameters
                       success:(nullable void (^)(NSURLSessionDataTask *task, id _Nullable responseObject))success
@@ -156,6 +161,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @see -dataTaskWithRequest:uploadProgress:downloadProgress:completionHandler:
  */
+/// GET 带进度回调
 - (nullable NSURLSessionDataTask *)GET:(NSString *)URLString
                             parameters:(nullable id)parameters
                               progress:(nullable void (^)(NSProgress *downloadProgress))downloadProgress
@@ -172,6 +178,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @see -dataTaskWithRequest:completionHandler:
  */
+/// HEAD 请求
 - (nullable NSURLSessionDataTask *)HEAD:(NSString *)URLString
                     parameters:(nullable id)parameters
                        success:(nullable void (^)(NSURLSessionDataTask *task))success
@@ -187,6 +194,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @see -dataTaskWithRequest:completionHandler:
  */
+/// POST 请求
 - (nullable NSURLSessionDataTask *)POST:(NSString *)URLString
                     parameters:(nullable id)parameters
                        success:(nullable void (^)(NSURLSessionDataTask *task, id _Nullable responseObject))success
@@ -203,6 +211,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @see -dataTaskWithRequest:uploadProgress:downloadProgress:completionHandler:
  */
+/// PONST请求带进度
 - (nullable NSURLSessionDataTask *)POST:(NSString *)URLString
                              parameters:(nullable id)parameters
                                progress:(nullable void (^)(NSProgress *uploadProgress))uploadProgress
@@ -220,6 +229,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @see -dataTaskWithRequest:completionHandler:
  */
+/// POST 二进制数据上传
 - (nullable NSURLSessionDataTask *)POST:(NSString *)URLString
                     parameters:(nullable id)parameters
      constructingBodyWithBlock:(nullable void (^)(id <AFMultipartFormData> formData))block

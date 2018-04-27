@@ -41,6 +41,7 @@ extern NSString *const SDWebImageDownloadFinishNotification;
  *
  * This will be overridden by any shared credentials that exist for the username or password of the request URL, if present.
  */
+/// 认证信息
 @property (nonatomic, strong) NSURLCredential *credential;
 
 /**
