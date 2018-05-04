@@ -44,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @return The percent-escaped string.
  */
+/// URL转码
 FOUNDATION_EXPORT NSString * AFPercentEscapedStringFromString(NSString *string);
 
 /**
@@ -53,6 +54,7 @@ FOUNDATION_EXPORT NSString * AFPercentEscapedStringFromString(NSString *string);
 
  @return A url encoded query string
  */
+/// 从字典参数转换成URL后面的参数
 FOUNDATION_EXPORT NSString * AFQueryStringFromParameters(NSDictionary *parameters);
 
 /**
@@ -60,6 +62,7 @@ FOUNDATION_EXPORT NSString * AFQueryStringFromParameters(NSDictionary *parameter
 
  For example, a JSON request serializer may set the HTTP body of the request to a JSON representation, and set the `Content-Type` HTTP header field value to `application/json`.
  */
+/// AFURLRequestSerialization 协议
 @protocol AFURLRequestSerialization <NSObject, NSSecureCoding, NSCopying>
 
 /**
@@ -71,6 +74,7 @@ FOUNDATION_EXPORT NSString * AFQueryStringFromParameters(NSDictionary *parameter
 
  @return A serialized request.
  */
+/// 协议方法 返回 NSURLRequest
 - (nullable NSURLRequest *)requestBySerializingRequest:(NSURLRequest *)request
                                withParameters:(nullable id)parameters
                                         error:(NSError * _Nullable __autoreleasing *)error NS_SWIFT_NOTHROW;
@@ -93,11 +97,13 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestQueryStringSerializationStyle) {
 
  Any request or response serializer dealing with HTTP is encouraged to subclass `AFHTTPRequestSerializer` in order to ensure consistent default behavior.
  */
+/// AFHTTPRequestSerializer 对象 实现了 AFURLRequestSerialization 协议
 @interface AFHTTPRequestSerializer : NSObject <AFURLRequestSerialization>
 
 /**
  The string encoding used to serialize parameters. `NSUTF8StringEncoding` by default.
  */
+/// 序列化URL参数的编码
 @property (nonatomic, assign) NSStringEncoding stringEncoding;
 
 /**
@@ -112,6 +118,7 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestQueryStringSerializationStyle) {
 
  @see NSMutableURLRequest -setCachePolicy:
  */
+/// NSURLRequestCache的缓存政策
 @property (nonatomic, assign) NSURLRequestCachePolicy cachePolicy;
 
 /**
@@ -119,6 +126,7 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestQueryStringSerializationStyle) {
 
  @see NSMutableURLRequest -setHTTPShouldHandleCookies:
  */
+/// HTTP 是否需要处理Cookies 默认 YES
 @property (nonatomic, assign) BOOL HTTPShouldHandleCookies;
 
 /**
@@ -126,6 +134,9 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestQueryStringSerializationStyle) {
 
  @see NSMutableURLRequest -setHTTPShouldUsePipelining:
  */
+// 通常默认情况下请求和响应是顺序的, 也就是说请求–>得到响应后,再请求.
+// 如果将HTTPShouldUsePipelining设置为YES, 则允许不必等到response, 就可以再次请求. 这个会很大的提高网络请求的效率,但是也可能会出问题.
+// 因为客户端无法正确的匹配请求与响应, 所以这依赖于服务器必须保证,响应的顺序与客户端请求的顺序一致.如果服务器不能保证这一点, 那可能导致响应和请求混乱.
 @property (nonatomic, assign) BOOL HTTPShouldUsePipelining;
 
 /**
@@ -133,6 +144,7 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestQueryStringSerializationStyle) {
 
  @see NSMutableURLRequest -setNetworkServiceType:
  */
+/// 网络服务类型
 @property (nonatomic, assign) NSURLRequestNetworkServiceType networkServiceType;
 
 /**
@@ -140,6 +152,7 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestQueryStringSerializationStyle) {
 
  @see NSMutableURLRequest -setTimeoutInterval:
  */
+/// 超时时间
 @property (nonatomic, assign) NSTimeInterval timeoutInterval;
 
 ///---------------------------------------
@@ -154,11 +167,13 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestQueryStringSerializationStyle) {
 
  @discussion To add or remove default request headers, use `setValue:forHTTPHeaderField:`.
  */
+/// readonly HTTP 头部字段信息
 @property (readonly, nonatomic, strong) NSDictionary <NSString *, NSString *> *HTTPRequestHeaders;
 
 /**
  Creates and returns a serializer with default configuration.
  */
+/// 初始化方法
 + (instancetype)serializer;
 
 /**
@@ -167,6 +182,7 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestQueryStringSerializationStyle) {
  @param field The HTTP header to set a default value for
  @param value The value set as default for the specified header, or `nil`
  */
+/// 设置HTTP HEADER 字段信息  key - value
 - (void)setValue:(nullable NSString *)value
 forHTTPHeaderField:(NSString *)field;
 
@@ -177,6 +193,7 @@ forHTTPHeaderField:(NSString *)field;
 
  @return The value set as default for the specified header, or `nil`
  */
+/// 取HTTP HEADER 字段信息  key - value
 - (nullable NSString *)valueForHTTPHeaderField:(NSString *)field;
 
 /**
@@ -185,12 +202,14 @@ forHTTPHeaderField:(NSString *)field;
  @param username The HTTP basic auth username
  @param password The HTTP basic auth password
  */
+/// 设置HEADER 认证 账号 和 密码
 - (void)setAuthorizationHeaderFieldWithUsername:(NSString *)username
                                        password:(NSString *)password;
 
 /**
  Clears any existing value for the "Authorization" HTTP header.
  */
+/// 清楚认证信息
 - (void)clearAuthorizationHeader;
 
 ///-------------------------------------------------------
@@ -234,6 +253,7 @@ forHTTPHeaderField:(NSString *)field;
 
  @return An `NSMutableURLRequest` object.
  */
+/// 创建 NSMutableURLRequest
 - (NSMutableURLRequest *)requestWithMethod:(NSString *)method
                                  URLString:(NSString *)URLString
                                 parameters:(nullable id)parameters
@@ -252,6 +272,7 @@ forHTTPHeaderField:(NSString *)field;
 
  @return An `NSMutableURLRequest` object
  */
+/// 创建 带二进制数据 NSMutableURLRequest
 - (NSMutableURLRequest *)multipartFormRequestWithMethod:(NSString *)method
                                               URLString:(NSString *)URLString
                                              parameters:(nullable NSDictionary <NSString *, id> *)parameters
@@ -269,6 +290,7 @@ forHTTPHeaderField:(NSString *)field;
 
  @see https://github.com/AFNetworking/AFNetworking/issues/1398
  */
+/// 创建 NSMutableURLRequest 文件 URL
 - (NSMutableURLRequest *)requestWithMultipartFormRequest:(NSURLRequest *)request
                              writingStreamContentsToFile:(NSURL *)fileURL
                                        completionHandler:(nullable void (^)(NSError * _Nullable error))handler;
@@ -280,6 +302,7 @@ forHTTPHeaderField:(NSString *)field;
 /**
  The `AFMultipartFormData` protocol defines the methods supported by the parameter in the block argument of `AFHTTPRequestSerializer -multipartFormRequestWithMethod:URLString:parameters:constructingBodyWithBlock:`.
  */
+/// 追加数据的协议 提供一些方法
 @protocol AFMultipartFormData
 
 /**
@@ -380,6 +403,7 @@ forHTTPHeaderField:(NSString *)field;
 /**
  `AFJSONRequestSerializer` is a subclass of `AFHTTPRequestSerializer` that encodes parameters as JSON using `NSJSONSerialization`, setting the `Content-Type` of the encoded request to `application/json`.
  */
+/// 请求序列化JSON
 @interface AFJSONRequestSerializer : AFHTTPRequestSerializer
 
 /**
@@ -401,6 +425,7 @@ forHTTPHeaderField:(NSString *)field;
 /**
  `AFPropertyListRequestSerializer` is a subclass of `AFHTTPRequestSerializer` that encodes parameters as JSON using `NSPropertyListSerializer`, setting the `Content-Type` of the encoded request to `application/x-plist`.
  */
+/// PLIST 序列化
 @interface AFPropertyListRequestSerializer : AFHTTPRequestSerializer
 
 /**

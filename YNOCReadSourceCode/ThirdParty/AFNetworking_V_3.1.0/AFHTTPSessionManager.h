@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  The URL used to construct requests from relative paths in methods like `requestWithMethod:URLString:parameters:`, and the `GET` / `POST` / et al. convenience methods.
  */
-/// 公共base url
+/// readonly 公共base url
 @property (readonly, nonatomic, strong, nullable) NSURL *baseURL;
 
 /**
@@ -265,6 +265,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @see -dataTaskWithRequest:completionHandler:
  */
+/// PUT 请求
 - (nullable NSURLSessionDataTask *)PUT:(NSString *)URLString
                    parameters:(nullable id)parameters
                       success:(nullable void (^)(NSURLSessionDataTask *task, id _Nullable responseObject))success
@@ -280,6 +281,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @see -dataTaskWithRequest:completionHandler:
  */
+/// PATCH 请求
 - (nullable NSURLSessionDataTask *)PATCH:(NSString *)URLString
                      parameters:(nullable id)parameters
                         success:(nullable void (^)(NSURLSessionDataTask *task, id _Nullable responseObject))success
@@ -295,6 +297,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @see -dataTaskWithRequest:completionHandler:
  */
+/// DELETE 请求
 - (nullable NSURLSessionDataTask *)DELETE:(NSString *)URLString
                       parameters:(nullable id)parameters
                          success:(nullable void (^)(NSURLSessionDataTask *task, id _Nullable responseObject))success

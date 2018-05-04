@@ -92,11 +92,13 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  The managed session.
  */
+/// 会话
 @property (readonly, nonatomic, strong) NSURLSession *session;
 
 /**
  The operation queue on which delegate callbacks are run.
  */
+/// 线程操作队列
 @property (readonly, nonatomic, strong) NSOperationQueue *operationQueue;
 
 /**
@@ -104,6 +106,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @warning `responseSerializer` must not be `nil`.
  */
+/// 结果数据序列化
 @property (nonatomic, strong) id <AFURLResponseSerialization> responseSerializer;
 
 ///-------------------------------
@@ -113,6 +116,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  The security policy used by created session to evaluate server trust for secure connections. `AFURLSessionManager` uses the `defaultPolicy` unless otherwise specified.
  */
+/// 安全政策
 @property (nonatomic, strong) AFSecurityPolicy *securityPolicy;
 
 #if !TARGET_OS_WATCH
@@ -123,11 +127,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  The network reachability manager. `AFURLSessionManager` uses the `sharedManager` by default.
  */
+/// 网络监测管理工具
 @property (readwrite, nonatomic, strong) AFNetworkReachabilityManager *reachabilityManager;
 #endif
 
 ///----------------------------
-/// @name Getting Session Tasks
+/// @name Getting Session Tasks - 任务
 ///----------------------------
 
 /**
@@ -157,11 +162,13 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  The dispatch queue for `completionBlock`. If `NULL` (default), the main queue is used.
  */
+/// 全局的完成时回调queue，如果为nil，则默认是主线程
 @property (nonatomic, strong, nullable) dispatch_queue_t completionQueue;
 
 /**
  The dispatch group for `completionBlock`. If `NULL` (default), a private dispatch group is used.
  */
+/// 全局的组完成回调queue
 @property (nonatomic, strong, nullable) dispatch_group_t completionGroup;
 
 ///---------------------------------
@@ -177,6 +184,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) BOOL attemptsToRecreateUploadTasksForBackgroundSessions;
 
+#pragma mark - 初始化方法
 ///---------------------
 /// @name Initialization
 ///---------------------
@@ -207,6 +215,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param request The HTTP request for the request.
  @param completionHandler A block object to be executed when the task finishes. This block has no return value and takes three arguments: the server response, the response object created by that serializer, and the error that occurred, if any.
  */
+/// 数据请求
 - (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request
                             completionHandler:(nullable void (^)(NSURLResponse *response, id _Nullable responseObject,  NSError * _Nullable error))completionHandler DEPRECATED_ATTRIBUTE;
 
@@ -218,6 +227,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param downloadProgressBlock A block object to be executed when the download progress is updated. Note this block is called on the session queue, not the main queue.
  @param completionHandler A block object to be executed when the task finishes. This block has no return value and takes three arguments: the server response, the response object created by that serializer, and the error that occurred, if any.
  */
+/// 数据请求 带 上传和下载进度 回调
 - (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request
                                uploadProgress:(nullable void (^)(NSProgress *uploadProgress))uploadProgressBlock
                              downloadProgress:(nullable void (^)(NSProgress *downloadProgress))downloadProgressBlock
@@ -237,6 +247,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @see `attemptsToRecreateUploadTasksForBackgroundSessions`
  */
+/// 数据上传 fileURL
 - (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request
                                          fromFile:(NSURL *)fileURL
                                          progress:(nullable void (^)(NSProgress *uploadProgress))uploadProgressBlock
@@ -250,6 +261,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param uploadProgressBlock A block object to be executed when the upload progress is updated. Note this block is called on the session queue, not the main queue.
  @param completionHandler A block object to be executed when the task finishes. This block has no return value and takes three arguments: the server response, the response object created by that serializer, and the error that occurred, if any.
  */
+/// 数据上航船 data
 - (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request
                                          fromData:(nullable NSData *)bodyData
                                          progress:(nullable void (^)(NSProgress *uploadProgress))uploadProgressBlock
@@ -280,6 +292,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @warning If using a background `NSURLSessionConfiguration` on iOS, these blocks will be lost when the app is terminated. Background sessions may prefer to use `-setDownloadTaskDidFinishDownloadingBlock:` to specify the URL for saving the downloaded file, rather than the destination block of this method.
  */
+/// 下载
 - (NSURLSessionDownloadTask *)downloadTaskWithRequest:(NSURLRequest *)request
                                              progress:(nullable void (^)(NSProgress *downloadProgress))downloadProgressBlock
                                           destination:(nullable NSURL * (^)(NSURL *targetPath, NSURLResponse *response))destination
@@ -299,7 +312,7 @@ NS_ASSUME_NONNULL_BEGIN
                                        completionHandler:(nullable void (^)(NSURLResponse *response, NSURL * _Nullable filePath, NSError * _Nullable error))completionHandler;
 
 ///---------------------------------
-/// @name Getting Progress for Tasks
+/// @name Getting Progress for Tasks 从Task中获取Progress
 ///---------------------------------
 
 /**
@@ -321,7 +334,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSProgress *)downloadProgressForTask:(NSURLSessionTask *)task;
 
 ///-----------------------------------------
-/// @name Setting Session Delegate Callbacks
+/// @name Setting Session Delegate Callbacks - 会话回调
 ///-----------------------------------------
 
 /**

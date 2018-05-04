@@ -45,9 +45,11 @@
 @end
 
 @implementation AFHTTPSessionManager
+/// responseSerializer / get / set method custome
 @dynamic responseSerializer;
 
 + (instancetype)manager {
+    /// 初始化 baseURL = nil
     return [[[self class] alloc] initWithBaseURL:nil];
 }
 
@@ -62,7 +64,7 @@
 - (instancetype)initWithSessionConfiguration:(NSURLSessionConfiguration *)configuration {
     return [self initWithBaseURL:nil sessionConfiguration:configuration];
 }
-
+/// 最终的初始化方法
 - (instancetype)initWithBaseURL:(NSURL *)url
            sessionConfiguration:(NSURLSessionConfiguration *)configuration
 {
@@ -77,14 +79,15 @@
     }
 
     self.baseURL = url;
-
+    /// 初始化请求序列化
     self.requestSerializer = [AFHTTPRequestSerializer serializer];
+    /// 初始化JSON结果序列化
     self.responseSerializer = [AFJSONResponseSerializer serializer];
 
     return self;
 }
 
-#pragma mark -
+#pragma mark - 重写setter方法检测参数
 
 - (void)setRequestSerializer:(AFHTTPRequestSerializer <AFURLRequestSerialization> *)requestSerializer {
     NSParameterAssert(requestSerializer);
@@ -108,14 +111,14 @@
 
     return [self GET:URLString parameters:parameters progress:nil success:success failure:failure];
 }
-
+/// GET 方法
 - (NSURLSessionDataTask *)GET:(NSString *)URLString
                    parameters:(id)parameters
                      progress:(void (^)(NSProgress * _Nonnull))downloadProgress
                       success:(void (^)(NSURLSessionDataTask * _Nonnull, id _Nullable))success
                       failure:(void (^)(NSURLSessionDataTask * _Nullable, NSError * _Nonnull))failure
 {
-
+   
     NSURLSessionDataTask *dataTask = [self dataTaskWithHTTPMethod:@"GET"
                                                         URLString:URLString
                                                        parameters:parameters
@@ -123,12 +126,12 @@
                                                  downloadProgress:downloadProgress
                                                           success:success
                                                           failure:failure];
-
+    /// 启动 dataTask
     [dataTask resume];
 
     return dataTask;
 }
-
+/// HEAD 方法
 - (NSURLSessionDataTask *)HEAD:(NSString *)URLString
                     parameters:(id)parameters
                        success:(void (^)(NSURLSessionDataTask *task))success
@@ -144,7 +147,7 @@
 
     return dataTask;
 }
-
+/// POST 方法
 - (NSURLSessionDataTask *)POST:(NSString *)URLString
                     parameters:(id)parameters
                        success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
@@ -165,7 +168,7 @@
 
     return dataTask;
 }
-
+/// POST 提交二进制数据
 - (NSURLSessionDataTask *)POST:(NSString *)URLString
                     parameters:(nullable id)parameters
      constructingBodyWithBlock:(nullable void (^)(id<AFMultipartFormData> _Nonnull))block
@@ -174,7 +177,7 @@
 {
     return [self POST:URLString parameters:parameters constructingBodyWithBlock:block progress:nil success:success failure:failure];
 }
-
+/// POST 提交二进制数据 带进度
 - (NSURLSessionDataTask *)POST:(NSString *)URLString
                     parameters:(id)parameters
      constructingBodyWithBlock:(void (^)(id <AFMultipartFormData> formData))block
@@ -183,7 +186,9 @@
                        failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure
 {
     NSError *serializationError = nil;
+    /// 请求序列化创建 NSMutableURLRequest
     NSMutableURLRequest *request = [self.requestSerializer multipartFormRequestWithMethod:@"POST" URLString:[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString] parameters:parameters constructingBodyWithBlock:block error:&serializationError];
+    /// 如果请求出错，则直接回调出failure block
     if (serializationError) {
         if (failure) {
             dispatch_async(self.completionQueue ?: dispatch_get_main_queue(), ^{
@@ -193,7 +198,7 @@
 
         return nil;
     }
-
+    /// 调用AFURLSessionManager uploadTaskWithStreamedRequest 方法
     __block NSURLSessionDataTask *task = [self uploadTaskWithStreamedRequest:request progress:uploadProgress completionHandler:^(NSURLResponse * __unused response, id responseObject, NSError *error) {
         if (error) {
             if (failure) {
@@ -210,7 +215,7 @@
 
     return task;
 }
-
+/// PUT
 - (NSURLSessionDataTask *)PUT:(NSString *)URLString
                    parameters:(id)parameters
                       success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
@@ -222,7 +227,7 @@
 
     return dataTask;
 }
-
+/// PATCH
 - (NSURLSessionDataTask *)PATCH:(NSString *)URLString
                      parameters:(id)parameters
                         success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
@@ -234,7 +239,7 @@
 
     return dataTask;
 }
-
+/// DELETE
 - (NSURLSessionDataTask *)DELETE:(NSString *)URLString
                       parameters:(id)parameters
                          success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
@@ -246,7 +251,7 @@
 
     return dataTask;
 }
-
+#pragma mark - 核心HTTP调用方法
 - (NSURLSessionDataTask *)dataTaskWithHTTPMethod:(NSString *)method
                                        URLString:(NSString *)URLString
                                       parameters:(id)parameters
@@ -255,8 +260,10 @@
                                          success:(void (^)(NSURLSessionDataTask *, id))success
                                          failure:(void (^)(NSURLSessionDataTask *, NSError *))failure
 {
+    /// 请求序列化创建 NSMutableURLRequest
     NSError *serializationError = nil;
     NSMutableURLRequest *request = [self.requestSerializer requestWithMethod:method URLString:[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString] parameters:parameters error:&serializationError];
+    /// 如果请求出错，则直接回调出failure block
     if (serializationError) {
         if (failure) {
             dispatch_async(self.completionQueue ?: dispatch_get_main_queue(), ^{
@@ -266,7 +273,7 @@
 
         return nil;
     }
-
+    /// 调用AFURLSessionManager dataTaskWithRequest 方法
     __block NSURLSessionDataTask *dataTask = nil;
     dataTask = [self dataTaskWithRequest:request
                           uploadProgress:uploadProgress
@@ -287,7 +294,7 @@
 }
 
 #pragma mark - NSObject
-
+/// 重新des描述信息
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%@: %p, baseURL: %@, session: %@, operationQueue: %@>", NSStringFromClass([self class]), self, [self.baseURL absoluteString], self.session, self.operationQueue];
 }
