@@ -512,7 +512,7 @@ forHTTPHeaderField:(NSString *)field
             }
         }
     }
-
+    /// 判断 HTTP Method 方法 来设置 参数
     if ([self.HTTPMethodsEncodingParametersInURI containsObject:[[request HTTPMethod] uppercaseString]]) {
         if (query && query.length > 0) {
             mutableRequest.URL = [NSURL URLWithString:[[mutableRequest.URL absoluteString] stringByAppendingFormat:mutableRequest.URL.query ? @"&%@" : @"?%@", query]];
