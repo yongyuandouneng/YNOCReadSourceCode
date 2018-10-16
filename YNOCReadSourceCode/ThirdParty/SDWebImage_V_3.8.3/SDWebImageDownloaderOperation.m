@@ -412,11 +412,13 @@ didReceiveResponse:(NSURLResponse *)response
             if (self.options & SDWebImageDownloaderIgnoreCachedResponse && responseFromCached) {
                 completionBlock(nil, nil, nil, YES);
             } else if (self.imageData) {
+                /// 创建图片
                 UIImage *image = [UIImage sd_imageWithData:self.imageData];
                 NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
                 image = [self scaledImageForKey:key image:image];
                 
                 // Do not force decoding animated GIFs
+                /// 不是GIF 则直接利用绘制BitMap进行解码
                 if (!image.images) {
                     if (self.shouldDecompressImages) {
                         image = [UIImage decodedImageWithImage:image];

@@ -178,7 +178,7 @@ static void _YYDiskCacheSetGlobal(YYDiskCache *cache) {
     
     YYDiskCache *globalCache = _YYDiskCacheGetGlobal(path);
     if (globalCache) return globalCache;
-    /// 判断使用目标存储类型
+    
     YYKVStorageType type;
     if (threshold == 0) {
         type = YYKVStorageTypeFile;

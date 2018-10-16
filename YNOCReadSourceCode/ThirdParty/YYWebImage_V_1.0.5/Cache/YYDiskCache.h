@@ -49,7 +49,6 @@ NS_ASSUME_NONNULL_BEGIN
  objects will be stored in sqlite. 
  
  The default value is 20480 (20KB).
- 超过这个值就放 files ，反之放sqlite
  */
 @property (readonly) NSUInteger inlineThreshold;
 

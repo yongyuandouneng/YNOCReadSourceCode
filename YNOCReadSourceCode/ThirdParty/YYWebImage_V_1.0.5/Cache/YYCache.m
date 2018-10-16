@@ -19,21 +19,19 @@
     NSLog(@"Use \"initWithName\" or \"initWithPath\" to create YYCache instance.");
     return [self initWithPath:@""];
 }
-/// 创建带昵称路径
+
 - (instancetype)initWithName:(NSString *)name {
     if (name.length == 0) return nil;
     NSString *cacheFolder = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
     NSString *path = [cacheFolder stringByAppendingPathComponent:name];
     return [self initWithPath:path];
 }
-/// 创建带完整路径
+
 - (instancetype)initWithPath:(NSString *)path {
     if (path.length == 0) return nil;
-    /// 创建磁盘缓存
     YYDiskCache *diskCache = [[YYDiskCache alloc] initWithPath:path];
     if (!diskCache) return nil;
     NSString *name = [path lastPathComponent];
-    /// 创建内存缓存
     YYMemoryCache *memoryCache = [YYMemoryCache new];
     memoryCache.name = name;
     
@@ -45,13 +43,13 @@
 }
 
 + (instancetype)cacheWithName:(NSString *)name {
-	return [[YYCache alloc] initWithName:name];
+    return [[self alloc] initWithName:name];
 }
 
 + (instancetype)cacheWithPath:(NSString *)path {
-    return [[YYCache alloc] initWithPath:path];
+    return [[self alloc] initWithPath:path];
 }
-/// 根据Key判断是否有对象
+
 - (BOOL)containsObjectForKey:(NSString *)key {
     return [_memoryCache containsObjectForKey:key] || [_diskCache containsObjectForKey:key];
 }
@@ -67,7 +65,7 @@
         [_diskCache containsObjectForKey:key withBlock:block];
     }
 }
-/// 取对象 如果内存没有 磁盘有 则往磁盘里面存数据
+
 - (id<NSCoding>)objectForKey:(NSString *)key {
     id<NSCoding> object = [_memoryCache objectForKey:key];
     if (!object) {

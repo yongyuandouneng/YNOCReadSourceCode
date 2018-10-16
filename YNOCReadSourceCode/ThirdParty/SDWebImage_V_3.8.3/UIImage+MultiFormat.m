@@ -23,10 +23,12 @@
     }
     
     UIImage *image;
+    /// 根据二进制字节头部判断图片格式
     NSString *imageContentType = [NSData sd_contentTypeForImageData:data];
     if ([imageContentType isEqualToString:@"image/gif"]) {
         image = [UIImage sd_animatedGIFWithData:data];
     }
+    /// 默认不支持SD_WEBP
 #ifdef SD_WEBP
     else if ([imageContentType isEqualToString:@"image/webp"])
     {
@@ -34,6 +36,7 @@
     }
 #endif
     else {
+        /// 用data方法初始化UIImage系统不会自动缓存到内存中
         image = [[UIImage alloc] initWithData:data];
         UIImageOrientation orientation = [self sd_imageOrientationFromImageData:data];
         if (orientation != UIImageOrientationUp) {
