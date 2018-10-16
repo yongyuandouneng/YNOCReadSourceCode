@@ -61,6 +61,8 @@
 		2E33DFFA21709ADA0097F805 /* CALayer+YYWebImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E33DFE721709ADA0097F805 /* CALayer+YYWebImage.m */; };
 		2E33DFFB21709ADA0097F805 /* YYWebImageOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E33DFE921709ADA0097F805 /* YYWebImageOperation.m */; };
 		2E33E01221744B110097F805 /* Aspects.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E33E01121744B110097F805 /* Aspects.m */; };
+		2E33E0252175CE570097F805 /* UIView+SDAutoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E33E0202175CE570097F805 /* UIView+SDAutoLayout.m */; };
+		2E33E0262175CE570097F805 /* UITableView+SDAutoTableViewCellHeight.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E33E0232175CE570097F805 /* UITableView+SDAutoTableViewCellHeight.m */; };
 		2E39FCE4215F80AC00C8646C /* People.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E39FCE3215F80AC00C8646C /* People.m */; };
 		2E51623A2090201300C7E8AA /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E51621A2090201300C7E8AA /* MKAnnotationView+WebCache.m */; };
 		2E51623B2090201300C7E8AA /* NSData+ImageContentType.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E51621C2090201300C7E8AA /* NSData+ImageContentType.m */; };
@@ -225,6 +227,11 @@
 		2E33DFE921709ADA0097F805 /* YYWebImageOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYWebImageOperation.m; sourceTree = "<group>"; };
 		2E33E01021744B110097F805 /* Aspects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Aspects.h; sourceTree = "<group>"; };
 		2E33E01121744B110097F805 /* Aspects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Aspects.m; sourceTree = "<group>"; };
+		2E33E0202175CE570097F805 /* UIView+SDAutoLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SDAutoLayout.m"; sourceTree = "<group>"; };
+		2E33E0212175CE570097F805 /* UITableView+SDAutoTableViewCellHeight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+SDAutoTableViewCellHeight.h"; sourceTree = "<group>"; };
+		2E33E0222175CE570097F805 /* SDAutoLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDAutoLayout.h; sourceTree = "<group>"; };
+		2E33E0232175CE570097F805 /* UITableView+SDAutoTableViewCellHeight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+SDAutoTableViewCellHeight.m"; sourceTree = "<group>"; };
+		2E33E0242175CE570097F805 /* UIView+SDAutoLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SDAutoLayout.h"; sourceTree = "<group>"; };
 		2E39FCE2215F80AC00C8646C /* People.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = People.h; sourceTree = "<group>"; };
 		2E39FCE3215F80AC00C8646C /* People.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = People.m; sourceTree = "<group>"; };
 		2E5162192090201300C7E8AA /* MKAnnotationView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKAnnotationView+WebCache.h"; sourceTree = "<group>"; };
@@ -580,6 +587,18 @@
 			path = Aspects;
 			sourceTree = "<group>";
 		};
+		2E33E01F2175CE570097F805 /* SDAutoLayout_V_2.2.0 */ = {
+			isa = PBXGroup;
+			children = (
+				2E33E0222175CE570097F805 /* SDAutoLayout.h */,
+				2E33E0242175CE570097F805 /* UIView+SDAutoLayout.h */,
+				2E33E0202175CE570097F805 /* UIView+SDAutoLayout.m */,
+				2E33E0232175CE570097F805 /* UITableView+SDAutoTableViewCellHeight.m */,
+				2E33E0212175CE570097F805 /* UITableView+SDAutoTableViewCellHeight.h */,
+			);
+			path = SDAutoLayout_V_2.2.0;
+			sourceTree = "<group>";
+		};
 		2E5162182090201300C7E8AA /* SDWebImage_V_3.8.3 */ = {
 			isa = PBXGroup;
 			children = (
@@ -747,6 +766,7 @@
 		2EB3E432208452C6004663FF /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				2E33E01F2175CE570097F805 /* SDAutoLayout_V_2.2.0 */,
 				2E95435F20BCED36000E963C /* Masonry_V_1.1.0 */,
 				2E33E00F21744B110097F805 /* Aspects */,
 				2E33DFC121709ADA0097F805 /* YYWebImage_V_1.0.5 */,
@@ -938,10 +958,12 @@
 				2E0E343E21081E530049C68B /* JSONAPI.m in Sources */,
 				2E95438420BCED36000E963C /* ViewController+MASAdditions.m in Sources */,
 				2E587CBF20994EDF00F722BA /* UIImageView+AFNetworking.m in Sources */,
+				2E33E0262175CE570097F805 /* UITableView+SDAutoTableViewCellHeight.m in Sources */,
 				2E0E346521081EEA0049C68B /* MJProperty.m in Sources */,
 				2E51623C2090201300C7E8AA /* SDImageCache.m in Sources */,
 				2E33DFEB21709ADA0097F805 /* YYDiskCache.m in Sources */,
 				2E0E346921081EEA0049C68B /* NSObject+MJCoding.m in Sources */,
+				2E33E0252175CE570097F805 /* UIView+SDAutoLayout.m in Sources */,
 				2E95437C20BCED36000E963C /* MASConstraint.m in Sources */,
 				2E0E343C21081E530049C68B /* JSONModelClassProperty.m in Sources */,
 				2E33DFF021709ADA0097F805 /* YYSpriteSheetImage.m in Sources */,

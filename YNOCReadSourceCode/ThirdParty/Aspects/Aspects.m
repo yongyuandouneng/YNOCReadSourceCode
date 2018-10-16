@@ -142,7 +142,7 @@ static id aspect_add(id self, SEL selector, AspectOptions options, id block, NSE
     NSCParameterAssert(self);
     NSCParameterAssert(selector);
     NSCParameterAssert(block);
-
+    
     __block AspectIdentifier *identifier = nil;
     /// 加锁代码块
     aspect_performLocked(^{
