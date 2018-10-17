@@ -56,7 +56,7 @@
 - (MASConstraint * (^)(NSValue *value))valueOffset;
 
 /**
- *	Sets the NSLayoutConstraint multiplier property
+ *	Sets the NSLayoutConstraint multiplier property 倍数
  */
 - (MASConstraint * (^)(CGFloat multiplier))multipliedBy;
 

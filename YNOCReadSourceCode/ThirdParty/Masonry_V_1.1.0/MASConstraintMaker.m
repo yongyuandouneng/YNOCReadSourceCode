@@ -31,8 +31,9 @@
     
     return self;
 }
-
+/// 执行完毕我们编写的Block之后执行install
 - (NSArray *)install {
+    /// 如果此值为YES 则先移除 uninstall
     if (self.removeExisting) {
         NSArray *installedConstraints = [MASViewConstraint installedConstraintsForView:self.view];
         for (MASConstraint *constraint in installedConstraints) {
@@ -42,22 +43,29 @@
     NSArray *constraints = self.constraints.copy;
     for (MASConstraint *constraint in constraints) {
         constraint.updateExisting = self.updateExisting;
+        /// install
+        /// 这里 install 的 都是 MASViewConstraint
         [constraint install];
     }
+    /// 移除
     [self.constraints removeAllObjects];
+    /// 返回之前的
     return constraints;
 }
 
 #pragma mark - MASConstraintDelegate
-
+/// 这里是代理回调
 - (void)constraint:(MASConstraint *)constraint shouldBeReplacedWithConstraint:(MASConstraint *)replacementConstraint {
     NSUInteger index = [self.constraints indexOfObject:constraint];
     NSAssert(index != NSNotFound, @"Could not find constraint %@", constraint);
     [self.constraints replaceObjectAtIndex:index withObject:replacementConstraint];
 }
 
+/// 该方法是添加 layoutAttribute的核心函数
 - (MASConstraint *)constraint:(MASConstraint *)constraint addConstraintWithLayoutAttribute:(NSLayoutAttribute)layoutAttribute {
+    /// 创建View Attribute
     MASViewAttribute *viewAttribute = [[MASViewAttribute alloc] initWithView:self.view layoutAttribute:layoutAttribute];
+    /// 创建View Constraint
     MASViewConstraint *newConstraint = [[MASViewConstraint alloc] initWithFirstViewAttribute:viewAttribute];
     if ([constraint isKindOfClass:MASViewConstraint.class]) {
         //replace with composite constraint
@@ -67,8 +75,11 @@
         [self constraint:constraint shouldBeReplacedWithConstraint:compositeConstraint];
         return compositeConstraint;
     }
+    /// constraint 是 nil
     if (!constraint) {
+        /// 设置代理 = self;
         newConstraint.delegate = self;
+        /// 加入进去
         [self.constraints addObject:newConstraint];
     }
     return newConstraint;
@@ -129,12 +140,12 @@
     return constraint;
 }
 
-#pragma mark - standard Attributes
+#pragma mark - standard Attributes 这下面是我们invokeh method
 
 - (MASConstraint *)addConstraintWithLayoutAttribute:(NSLayoutAttribute)layoutAttribute {
     return [self constraint:nil addConstraintWithLayoutAttribute:layoutAttribute];
 }
-
+// 下面函数都是调用上面的函数
 - (MASConstraint *)left {
     return [self addConstraintWithLayoutAttribute:NSLayoutAttributeLeft];
 }

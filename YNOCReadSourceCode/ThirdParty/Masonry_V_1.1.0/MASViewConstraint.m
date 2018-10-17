@@ -52,6 +52,7 @@ static char kInstalledConstraintsKey;
 
 @implementation MASViewConstraint
 
+/// 构造函数
 - (id)initWithFirstViewAttribute:(MASViewAttribute *)firstViewAttribute {
     self = [super init];
     if (!self) return nil;
@@ -82,7 +83,7 @@ static char kInstalledConstraintsKey;
 }
 
 #pragma mark - Private
-
+/// 设置 constant
 - (void)setLayoutConstant:(CGFloat)layoutConstant {
     _layoutConstant = layoutConstant;
 
@@ -96,7 +97,7 @@ static char kInstalledConstraintsKey;
     self.layoutConstraint.constant = layoutConstant;
 #endif
 }
-
+/// 设置 layoutRelation
 - (void)setLayoutRelation:(NSLayoutRelation)layoutRelation {
     _layoutRelation = layoutRelation;
     self.hasLayoutRelation = YES;
@@ -137,7 +138,7 @@ static char kInstalledConstraintsKey;
 }
 
 #pragma mark - NSLayoutConstraint multiplier proxies
-
+/// 倍数
 - (MASConstraint * (^)(CGFloat))multipliedBy {
     return ^id(CGFloat multiplier) {
         NSAssert(!self.hasBeenInstalled,
@@ -211,7 +212,7 @@ static char kInstalledConstraintsKey;
 
 - (MASConstraint *)addConstraintWithLayoutAttribute:(NSLayoutAttribute)layoutAttribute {
     NSAssert(!self.hasLayoutRelation, @"Attributes should be chained before defining the constraint relation");
-
+    /// 代理回调
     return [self.delegate constraint:self addConstraintWithLayoutAttribute:layoutAttribute];
 }
 
@@ -262,11 +263,11 @@ static char kInstalledConstraintsKey;
 - (void)setInset:(CGFloat)inset {
     [self setInsets:(MASEdgeInsets){.top = inset, .left = inset, .bottom = inset, .right = inset}];
 }
-
+/// 设置 offset 其实就是设置 constant
 - (void)setOffset:(CGFloat)offset {
     self.layoutConstant = offset;
 }
-
+/// 设置 size off y就是设置
 - (void)setSizeOffset:(CGSize)sizeOffset {
     NSLayoutAttribute layoutAttribute = self.firstViewAttribute.layoutAttribute;
     switch (layoutAttribute) {
@@ -280,7 +281,7 @@ static char kInstalledConstraintsKey;
             break;
     }
 }
-
+/// 也是设置constant
 - (void)setCenterOffset:(CGPoint)centerOffset {
     NSLayoutAttribute layoutAttribute = self.firstViewAttribute.layoutAttribute;
     switch (layoutAttribute) {
@@ -304,31 +305,34 @@ static char kInstalledConstraintsKey;
 - (void)deactivate {
     [self uninstall];
 }
-
+/// 核心添加View的constraint方法
 - (void)install {
+    /// 如果已经安装 直接 return
     if (self.hasBeenInstalled) {
         return;
     }
-    
+    /// 校验
     if ([self supportsActiveProperty] && self.layoutConstraint) {
         self.layoutConstraint.active = YES;
         [self.firstViewAttribute.view.mas_installedConstraints addObject:self];
         return;
     }
-    
+    /// 取得第一个 attribute
     MAS_VIEW *firstLayoutItem = self.firstViewAttribute.item;
     NSLayoutAttribute firstLayoutAttribute = self.firstViewAttribute.layoutAttribute;
+    /// 取得第二个attribute
     MAS_VIEW *secondLayoutItem = self.secondViewAttribute.item;
     NSLayoutAttribute secondLayoutAttribute = self.secondViewAttribute.layoutAttribute;
 
     // alignment attributes must have a secondViewAttribute
     // therefore we assume that is refering to superview
     // eg make.left.equalTo(@10)
+    // 直接设置为 相对于superView
     if (!self.firstViewAttribute.isSizeAttribute && !self.secondViewAttribute) {
         secondLayoutItem = self.firstViewAttribute.view.superview;
         secondLayoutAttribute = firstLayoutAttribute;
     }
-    
+    /// 生成 NSLayoutConstraint
     MASLayoutConstraint *layoutConstraint
         = [MASLayoutConstraint constraintWithItem:firstLayoutItem
                                         attribute:firstLayoutAttribute
@@ -337,8 +341,9 @@ static char kInstalledConstraintsKey;
                                         attribute:secondLayoutAttribute
                                        multiplier:self.layoutMultiplier
                                          constant:self.layoutConstant];
-    
+    /// 设置 priority 权重
     layoutConstraint.priority = self.layoutPriority;
+    /// 设置 key
     layoutConstraint.mas_key = self.mas_key;
     
     if (self.secondViewAttribute.view) {
@@ -353,18 +358,21 @@ static char kInstalledConstraintsKey;
         self.installedView = self.firstViewAttribute.view.superview;
     }
 
-
+    /// 找到存在的 constraint
     MASLayoutConstraint *existingConstraint = nil;
     if (self.updateExisting) {
         existingConstraint = [self layoutConstraintSimilarTo:layoutConstraint];
     }
+    /// 存在 existingConstraint 更新
     if (existingConstraint) {
         // just update the constant
         existingConstraint.constant = layoutConstraint.constant;
         self.layoutConstraint = existingConstraint;
     } else {
+        /// 添加
         [self.installedView addConstraint:layoutConstraint];
         self.layoutConstraint = layoutConstraint;
+        /// 加入到数组中
         [firstLayoutItem.mas_installedConstraints addObject:self];
     }
 }
@@ -389,6 +397,7 @@ static char kInstalledConstraintsKey;
     return nil;
 }
 
+/// 核心移除View的constraint方法
 - (void)uninstall {
     if ([self supportsActiveProperty]) {
         self.layoutConstraint.active = NO;

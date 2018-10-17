@@ -11,9 +11,13 @@
 
 @implementation MAS_VIEW (MASAdditions)
 
+/// 添加Constraints 入口函数
 - (NSArray *)mas_makeConstraints:(void(^)(MASConstraintMaker *))block {
     self.translatesAutoresizingMaskIntoConstraints = NO;
+    /// 创建contraint Maker
     MASConstraintMaker *constraintMaker = [[MASConstraintMaker alloc] initWithView:self];
+    /// 执行block block用作参数传入，没有拷贝到堆上，也没有被强引用，自动释放，在block里面写self不会造成引用循环
+    /// 把block传递出去
     block(constraintMaker);
     return [constraintMaker install];
 }
@@ -21,6 +25,7 @@
 - (NSArray *)mas_updateConstraints:(void(^)(MASConstraintMaker *))block {
     self.translatesAutoresizingMaskIntoConstraints = NO;
     MASConstraintMaker *constraintMaker = [[MASConstraintMaker alloc] initWithView:self];
+    /// update tag 如果不存在就 Install
     constraintMaker.updateExisting = YES;
     block(constraintMaker);
     return [constraintMaker install];
@@ -29,6 +34,7 @@
 - (NSArray *)mas_remakeConstraints:(void(^)(MASConstraintMaker *make))block {
     self.translatesAutoresizingMaskIntoConstraints = NO;
     MASConstraintMaker *constraintMaker = [[MASConstraintMaker alloc] initWithView:self];
+    /// remove tag
     constraintMaker.removeExisting = YES;
     block(constraintMaker);
     return [constraintMaker install];

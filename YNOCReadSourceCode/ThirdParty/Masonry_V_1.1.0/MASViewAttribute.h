@@ -11,6 +11,7 @@
 /**
  *  An immutable tuple which stores the view and the related NSLayoutAttribute.
  *  Describes part of either the left or right hand side of a constraint equation
+ *  仅仅封装参数 view / item / layoutAttribute
  */
 @interface MASViewAttribute : NSObject
 

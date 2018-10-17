@@ -329,9 +329,9 @@ typedef void (^SpaceToSuperView)(UIEdgeInsets insets);
 @property (nonatomic) SDAutoLayoutModel *ownLayoutModel;
 /// 最大 max width
 @property (nonatomic, strong) NSNumber *sd_maxWidth;
-/// 自动比例高度
+/// 高度等于宽度的ratio
 @property (nonatomic, strong) NSNumber *autoHeightRatioValue;
-/// 自定比例宽度
+/// 宽度等于高度的ration 
 @property (nonatomic, strong) NSNumber *autoWidthRatioValue;
 
 @end

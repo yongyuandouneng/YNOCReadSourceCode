@@ -1040,6 +1040,7 @@ Class cellContVClass()
     [self sd_clearAutoLayoutSettings];
     [self removeFromSuperview];
 }
+
 /// clear model info.
 - (void)sd_clearAutoLayoutSettings
 {
@@ -1098,15 +1099,19 @@ Class cellContVClass()
             SDAutoLayoutModel *model = view.sd_layout;
             /// 取得 left
             CGFloat left = model.left ? [model.left.value floatValue] : model.needsAutoResizeView.left_sd;
+            /// 累加总边距
             totalMargin += (left + [model.right.value floatValue]);
         }];
+        /// 求出总宽度
         CGFloat averageWidth = (self.width_sd - totalMargin) / self.sd_equalWidthSubviews.count;
+        /// 遍历设置View宽度
         [self.sd_equalWidthSubviews enumerateObjectsUsingBlock:^(UIView *view, NSUInteger idx, BOOL *stop) {
             view.width_sd = averageWidth;
             view.fixedWidth = @(averageWidth);
         }];
     }
     
+    /// flow处理
     if (self.sd_categoryManager.flowItems.count && (self.sd_categoryManager.lastWidth != self.width_sd)) {
         
         self.sd_categoryManager.lastWidth = self.width_sd;
@@ -1154,14 +1159,15 @@ Class cellContVClass()
         }];
     }
     
+    /// 有Model 也就是子Model
     if (self.autoLayoutModelsArray.count) {
         
         NSMutableArray *caches = nil;
-        
+        /// cell 高度 缓存处理
         if ([self isKindOfClass:cellContVClass()] && self.sd_tableView) {
             caches = [self.sd_tableView.cellAutoHeightManager subviewFrameCachesWithIndexPath:self.sd_indexPath];
         }
-        
+        /// 遍历autoLayoutModelsArray
         [self.autoLayoutModelsArray enumerateObjectsUsingBlock:^(SDAutoLayoutModel *model, NSUInteger idx, BOOL *stop) {
             if (idx < caches.count) {
                 CGRect originalFrame = model.needsAutoResizeView.frame;
@@ -1174,21 +1180,24 @@ Class cellContVClass()
                 [self setupCornerRadiusWithView:model.needsAutoResizeView model:model];
                 model.needsAutoResizeView.sd_categoryManager.hasSetFrameWithCache = YES;
             } else {
+                /// 没有缓存的处理 不在Cell中
+                /// 设置没有缓存 NO
                 if (model.needsAutoResizeView.sd_categoryManager.hasSetFrameWithCache) {
                     model.needsAutoResizeView.sd_categoryManager.hasSetFrameWithCache = NO;
                 }
+                /// 调整layout
                 [self sd_resizeWithModel:model];
             }
         }];
     }
-    
+    /// cell 处理
     if (self.tag == kSDModelCellTag && [self isKindOfClass:cellContVClass()]) {
         UITableViewCell *cell = (UITableViewCell *)(self.superview);
         
         while (cell && ![cell isKindOfClass:[UITableViewCell class]]) {
             cell = (UITableViewCell *)cell.superview;
         }
-        
+        /// 遍历取得最下面bottom view  + margin
         if ([cell isKindOfClass:[UITableViewCell class]]) {
             CGFloat height = 0;
             for (UIView *view in cell.sd_bottomViewsArray) {
@@ -1273,23 +1282,27 @@ Class cellContVClass()
     }
 }
 
+/// 核心方法：根据Model调整layout
 - (void)sd_resizeWithModel:(SDAutoLayoutModel *)model
 {
+    /// 取出View 验参
     UIView *view = model.needsAutoResizeView;
     
     if (!view || view.sd_isClosingAutoLayout) return;
     
     if (view.sd_maxWidth && (model.rightSpaceToView || model.rightEqualToView)) { // 靠右布局前提设置
+        
         [self layoutAutoWidthWidthView:view model:model];
+        /// 设置宽度
         view.fixedWidth = @(view.width_sd);
     }
-    
+    /// width
     [self layoutWidthWithView:view model:model];
-    
+    /// height
     [self layoutHeightWithView:view model:model];
-    
+    /// left
     [self layoutLeftWithView:view model:model];
-    
+    /// right
     [self layoutRightWithView:view model:model];
     
     if (view.autoHeightRatioValue && view.width_sd > 0 && (model.bottomEqualToView || model.bottomSpaceToView)) { // 底部布局前提设置
@@ -1297,19 +1310,21 @@ Class cellContVClass()
         view.fixedHeight = @(view.height_sd);
     }
     
+    /// 宽度比例
     if (view.autoWidthRatioValue) {
         view.fixedWidth = @(view.height_sd * [view.autoWidthRatioValue floatValue]);
     }
-    
-    
+    /// top
     [self layoutTopWithView:view model:model];
     
+    /// bottom
     [self layoutBottomWithView:view model:model];
     
+    /// centerX
     if ((model.centerX || model.equalCenterX) && !view.fixedWidth) {
         [self layoutLeftWithView:view model:model];
     }
-    
+    /// centerY
     if ((model.centerY || model.equalCenterY) && !view.fixedHeight) {
         [self layoutTopWithView:view model:model];
     }
@@ -1318,10 +1333,11 @@ Class cellContVClass()
         [self layoutAutoWidthWidthView:view model:model];
     }
     
+    /// 最大宽度
     if (model.maxWidth && [model.maxWidth floatValue] < view.width_sd) {
         view.width_sd = [model.maxWidth floatValue];
     }
-    
+    /// 最小宽度
     if (model.minWidth && [model.minWidth floatValue] > view.width_sd) {
         view.width_sd = [model.minWidth floatValue];
     }
@@ -1330,14 +1346,17 @@ Class cellContVClass()
         [self layoutAutoHeightWidthView:view model:model];
     }
     
+    /// 最大高度设置
     if (model.maxHeight && [model.maxHeight floatValue] < view.height_sd) {
         view.height_sd = [model.maxHeight floatValue];
     }
     
+    /// 最小高度设置
     if (model.minHeight && [model.minHeight floatValue] > view.height_sd) {
         view.height_sd = [model.minHeight floatValue];
     }
     
+    /// 宽高相等
     if (model.widthEqualHeight) {
         view.width_sd = view.height_sd;
     }
@@ -1346,6 +1365,7 @@ Class cellContVClass()
         view.height_sd = view.width_sd;
     }
     
+    /// block 回调
     if (view.didFinishAutoLayoutBlock) {
         view.didFinishAutoLayoutBlock(view.frame);
     }
@@ -1353,7 +1373,7 @@ Class cellContVClass()
     if (view.sd_bottomViewsArray.count || view.sd_rightViewsArray.count) {
         [view layoutSubviews];
     }
-    
+    /// 设置圆角
     [self setupCornerRadiusWithView:view model:model];
 }
 
@@ -1409,6 +1429,7 @@ Class cellContVClass()
     }
 }
 
+/// 布局宽度
 - (void)layoutWidthWithView:(UIView *)view model:(SDAutoLayoutModel *)model
 {
     if (model.width) {
@@ -1420,6 +1441,7 @@ Class cellContVClass()
     }
 }
 
+/// 布局高度
 - (void)layoutHeightWithView:(UIView *)view model:(SDAutoLayoutModel *)model
 {
     if (model.height) {
@@ -1431,17 +1453,22 @@ Class cellContVClass()
     }
 }
 
+/// 布局left and width
 - (void)layoutLeftWithView:(UIView *)view model:(SDAutoLayoutModel *)model
 {
+    /// 存在左边 Margin
     if (model.left) {
+        /// 如果ref == superView
         if (view.superview == model.left.refView) {
+            /// 设置宽度
             if (!view.fixedWidth) { // view.autoLeft && view.autoRight
                 view.width_sd = view.right_sd - [model.left.value floatValue];
             }
             view.left_sd = [model.left.value floatValue];
-        } else {
+        } else { /// ref == other view
             if (model.left.refViewsArray.count) {
                 CGFloat lastRefRight = 0;
+                /// 求得最右一个ref view
                 for (UIView *ref in model.left.refViewsArray) {
                     if ([ref isKindOfClass:[UIView class]] && ref.right_sd > lastRefRight) {
                         model.left.refView = ref;
@@ -1449,13 +1476,16 @@ Class cellContVClass()
                     }
                 }
             }
+            /// set width
             if (!view.fixedWidth) { // view.autoLeft && view.autoRight
                 view.width_sd = view.right_sd - model.left.refView.right_sd - [model.left.value floatValue];
             }
+            /// set left
             view.left_sd = model.left.refView.right_sd + [model.left.value floatValue];
         }
         
     } else if (model.equalLeft) {
+        /// set width
         if (!view.fixedWidth) {
             if (model.needsAutoResizeView == view.superview) {
                 view.width_sd = view.right_sd - (0 + model.equalLeft.offset);
@@ -1463,37 +1493,44 @@ Class cellContVClass()
                 view.width_sd = view.right_sd  - (model.equalLeft.refView.left_sd + model.equalLeft.offset);
             }
         }
+        /// set left
         if (view.superview == model.equalLeft.refView) {
             view.left_sd = 0 + model.equalLeft.offset;
         } else {
             view.left_sd = model.equalLeft.refView.left_sd + model.equalLeft.offset;
         }
     } else if (model.equalCenterX) {
+        /// set centerX
         if (view.superview == model.equalCenterX.refView) {
             view.centerX_sd = model.equalCenterX.refView.width_sd * 0.5 + model.equalCenterX.offset;
         } else {
             view.centerX_sd = model.equalCenterX.refView.centerX_sd + model.equalCenterX.offset;
         }
     } else if (model.centerX) {
+        /// set centerX
         view.centerX_sd = [model.centerX floatValue];
     }
 }
-
+/// 布局 right and width
 - (void)layoutRightWithView:(UIView *)view model:(SDAutoLayoutModel *)model
 {
     if (model.right) {
         if (view.superview == model.right.refView) {
+            /// set width
             if (!view.fixedWidth) { // view.autoLeft && view.autoRight
                 view.width_sd = model.right.refView.width_sd - view.left_sd - [model.right.value floatValue];
             }
+            /// set right  superview - model right margin
             view.right_sd = model.right.refView.width_sd - [model.right.value floatValue];
         } else {
             if (!view.fixedWidth) { // view.autoLeft && view.autoRight
                 view.width_sd =  model.right.refView.left_sd - view.left_sd - [model.right.value floatValue];
             }
+            // set right
             view.right_sd = model.right.refView.left_sd - [model.right.value floatValue];
         }
     } else if (model.equalRight) {
+        /// set width
         if (!view.fixedWidth) {
             if (model.equalRight.refView == view.superview) {
                 view.width_sd = model.equalRight.refView.width_sd - view.left_sd + model.equalRight.offset;
@@ -1501,7 +1538,7 @@ Class cellContVClass()
                 view.width_sd = model.equalRight.refView.right_sd - view.left_sd + model.equalRight.offset;
             }
         }
-        
+        /// set right
         view.right_sd = model.equalRight.refView.right_sd + model.equalRight.offset;
         if (view.superview == model.equalRight.refView) {
             view.right_sd = model.equalRight.refView.width_sd + model.equalRight.offset;
@@ -1510,13 +1547,16 @@ Class cellContVClass()
     }
 }
 
+/// 布局 top and height
 - (void)layoutTopWithView:(UIView *)view model:(SDAutoLayoutModel *)model
 {
     if (model.top) {
         if (view.superview == model.top.refView) {
+            /// set height
             if (!view.fixedHeight) { // view.autoTop && view.autoBottom && view.bottom
                 view.height_sd = view.bottom_sd - [model.top.value floatValue];
             }
+            /// set top
             view.top_sd = [model.top.value floatValue];
         } else {
             if (model.top.refViewsArray.count) {
@@ -1528,9 +1568,11 @@ Class cellContVClass()
                     }
                 }
             }
+            /// set height
             if (!view.fixedHeight) { // view.autoTop && view.autoBottom && view.bottom
                 view.height_sd = view.bottom_sd - model.top.refView.bottom_sd - [model.top.value floatValue];
             }
+            /// set top
             view.top_sd = model.top.refView.bottom_sd + [model.top.value floatValue];
         }
     } else if (model.equalTop) {
@@ -1589,7 +1631,7 @@ Class cellContVClass()
     }
 }
 
-
+/// 设置圆角
 - (void)setupCornerRadiusWithView:(UIView *)view model:(SDAutoLayoutModel *)model
 {
     CGFloat cornerRadius = view.layer.cornerRadius;
@@ -1609,6 +1651,7 @@ Class cellContVClass()
     }
 }
 
+/// 添加model
 - (void)addAutoLayoutModel:(SDAutoLayoutModel *)model
 {
     [self.autoLayoutModelsArray addObject:model];

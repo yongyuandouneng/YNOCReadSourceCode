@@ -280,9 +280,10 @@
         NSAssert(self.modelCell.sd_bottomViewsArray.count, @">>>>>> 你的cell还没有调用“setupAutoHeightWithBottomView:(UIView *)bottomView bottomMargin:(CGFloat)bottomMargin”方法或者你传递的bottomView为nil，请检查并修改");
         
 #endif
-        
+        /// 调用layoutSubViews 预先布局
         [self.modelCell.contentView layoutSubviews];
         NSString *cacheKey = [self cacheKeyForIndexPath:indexPath];
+        /// 存入高度
         [_cacheDictionary setObject:@(self.modelCell.autoHeight) forKey:cacheKey];
         
         
