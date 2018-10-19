@@ -11,10 +11,13 @@
  */
 
 #import <Foundation/Foundation.h>
-
+/// 弱引用self对象
 @interface MLeakedObjectProxy : NSObject
 
+/// 判断是否存在了objc
 + (BOOL)isAnyObjectLeakedAtPtrs:(NSSet *)ptrs;
+
+/// 添加leak objc
 + (void)addLeakedObject:(id)object;
 
 @end

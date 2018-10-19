@@ -26,7 +26,7 @@ extern const void *const kLatestSenderKey;
         [self swizzleSEL:@selector(sendAction:to:from:forEvent:) withSEL:@selector(swizzled_sendAction:to:from:forEvent:)];
     });
 }
-
+/// hook  sendAction 事件，设置最近点击的状态到 application 关联对象当中
 - (BOOL)swizzled_sendAction:(SEL)action to:(id)target from:(id)sender forEvent:(UIEvent *)event {
     objc_setAssociatedObject(self, kLatestSenderKey, @((uintptr_t)sender), OBJC_ASSOCIATION_RETAIN);
     

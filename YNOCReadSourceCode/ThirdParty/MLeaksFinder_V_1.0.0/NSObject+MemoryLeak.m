@@ -26,15 +26,20 @@ const void *const kLatestSenderKey = &kLatestSenderKey;
 
 @implementation NSObject (MemoryLeak)
 
+/// 将要销毁时发生一个消息的核心方法 - 意思是 是否要走检测方法
 - (BOOL)willDealloc {
+    /// 取得类名
     NSString *className = NSStringFromClass([self class]);
+    /// 取得白名单
     if ([[NSObject classNamesWhitelist] containsObject:className])
         return NO;
-    
+    /// 取得点击事件的值
     NSNumber *senderPtr = objc_getAssociatedObject([UIApplication sharedApplication], kLatestSenderKey);
+    /// 如果等于当前的就返回NO
     if ([senderPtr isEqualToNumber:@((uintptr_t)self)])
         return NO;
     
+   /// 延迟两秒发送消息
     __weak id weakSelf = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         __strong id strongSelf = weakSelf;
@@ -44,12 +49,15 @@ const void *const kLatestSenderKey = &kLatestSenderKey;
     return YES;
 }
 
+
 - (void)assertNotDealloc {
+    
     if ([MLeakedObjectProxy isAnyObjectLeakedAtPtrs:[self parentPtrs]]) {
         return;
     }
+    /// 如果能来到 这里 证明有引用循环
     [MLeakedObjectProxy addLeakedObject:self];
-    
+    /// 打印Log
     NSString *className = NSStringFromClass([self class]);
     NSLog(@"Possibly Memory Leak.\nIn case that %@ should not be dealloced, override -willDealloc in %@ by returning NO.\nView-ViewController stack: %@", className, className, [self viewStack]);
 }
@@ -70,13 +78,14 @@ const void *const kLatestSenderKey = &kLatestSenderKey;
     if (!child) {
         return;
     }
-    
     [self willReleaseChildren:@[ child ]];
 }
 
+/// 设置stack 和 parentptrs 和 调用 willDealloc 发送消息
 - (void)willReleaseChildren:(NSArray *)children {
     NSArray *viewStack = [self viewStack];
     NSSet *parentPtrs = [self parentPtrs];
+    
     for (id child in children) {
         NSString *className = NSStringFromClass([child class]);
         [child setViewStack:[viewStack arrayByAddingObject:className]];
@@ -85,6 +94,7 @@ const void *const kLatestSenderKey = &kLatestSenderKey;
     }
 }
 
+/// 视图 tree
 - (NSArray *)viewStack {
     NSArray *viewStack = objc_getAssociatedObject(self, kViewStackKey);
     if (viewStack) {
@@ -98,7 +108,7 @@ const void *const kLatestSenderKey = &kLatestSenderKey;
 - (void)setViewStack:(NSArray *)viewStack {
     objc_setAssociatedObject(self, kViewStackKey, viewStack, OBJC_ASSOCIATION_RETAIN);
 }
-
+/// 设置 parentPtrs set 指
 - (NSSet *)parentPtrs {
     NSSet *parentPtrs = objc_getAssociatedObject(self, kParentPtrsKey);
     if (!parentPtrs) {
@@ -111,6 +121,7 @@ const void *const kLatestSenderKey = &kLatestSenderKey;
     objc_setAssociatedObject(self, kParentPtrsKey, parentPtrs, OBJC_ASSOCIATION_RETAIN);
 }
 
+/// 白名单 - 意思就是这些本来就会造成内存循环引用
 + (NSMutableSet *)classNamesWhitelist {
     static NSMutableSet *whitelist = nil;
     static dispatch_once_t onceToken;

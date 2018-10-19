@@ -21,6 +21,7 @@ static const void *const kPoppedDetailVCKey = &kPoppedDetailVCKey;
 @implementation UINavigationController (MemoryLeak)
 
 + (void)load {
+    /// hook pushViewController 、 popViewControllerAnimated 、popToViewController 、popToRootViewControllerAnimated
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [self swizzleSEL:@selector(pushViewController:animated:) withSEL:@selector(swizzled_pushViewController:animated:)];
@@ -31,6 +32,7 @@ static const void *const kPoppedDetailVCKey = &kPoppedDetailVCKey;
 }
 
 - (void)swizzled_pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
+    /// 针对 splitViewController
     if (self.splitViewController) {
         id detailViewController = objc_getAssociatedObject(self, kPoppedDetailVCKey);
         if ([detailViewController isKindOfClass:[UIViewController class]]) {
@@ -48,7 +50,7 @@ static const void *const kPoppedDetailVCKey = &kPoppedDetailVCKey;
     if (!poppedViewController) {
         return nil;
     }
-    
+    /// 设置当前页面要销毁了 针对splitViewController
     // Detail VC in UISplitViewController is not dealloced until another detail VC is shown
     if (self.splitViewController &&
         self.splitViewController.viewControllers.firstObject == self &&
@@ -57,6 +59,7 @@ static const void *const kPoppedDetailVCKey = &kPoppedDetailVCKey;
         return poppedViewController;
     }
     
+    /// 设置当前页面要销毁了
     // VC is not dealloced until disappear when popped using a left-edge swipe gesture
     extern const void *const kHasBeenPoppedKey;
     objc_setAssociatedObject(poppedViewController, kHasBeenPoppedKey, @(YES), OBJC_ASSOCIATION_RETAIN);
@@ -66,8 +69,9 @@ static const void *const kPoppedDetailVCKey = &kPoppedDetailVCKey;
 
 - (NSArray<UIViewController *> *)swizzled_popToViewController:(UIViewController *)viewController animated:(BOOL)animated {
     NSArray<UIViewController *> *poppedViewControllers = [self swizzled_popToViewController:viewController animated:animated];
-    
+    /// 遍历调用 willDealloc
     for (UIViewController *viewController in poppedViewControllers) {
+        /// 调用下方的 willDealloc
         [viewController willDealloc];
     }
     
@@ -76,7 +80,7 @@ static const void *const kPoppedDetailVCKey = &kPoppedDetailVCKey;
 
 - (NSArray<UIViewController *> *)swizzled_popToRootViewControllerAnimated:(BOOL)animated {
     NSArray<UIViewController *> *poppedViewControllers = [self swizzled_popToRootViewControllerAnimated:animated];
-    
+    /// 遍历调用 willDealloc
     for (UIViewController *viewController in poppedViewControllers) {
         [viewController willDealloc];
     }
@@ -88,7 +92,7 @@ static const void *const kPoppedDetailVCKey = &kPoppedDetailVCKey;
     if (![super willDealloc]) {
         return NO;
     }
-    
+    /// 收集 view stack d和 ptr
     [self willReleaseChildren:self.viewControllers];
     
     return YES;

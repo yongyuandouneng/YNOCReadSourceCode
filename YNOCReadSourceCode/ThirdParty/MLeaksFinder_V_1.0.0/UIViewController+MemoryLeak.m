@@ -21,6 +21,7 @@ const void *const kHasBeenPoppedKey = &kHasBeenPoppedKey;
 @implementation UIViewController (MemoryLeak)
 
 + (void)load {
+    /// hook viewDidDisappear viewWillAppear dismissViewControllerAnimated 三个方法
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [self swizzleSEL:@selector(viewDidDisappear:) withSEL:@selector(swizzled_viewDidDisappear:)];
@@ -28,7 +29,7 @@ const void *const kHasBeenPoppedKey = &kHasBeenPoppedKey;
         [self swizzleSEL:@selector(dismissViewControllerAnimated:completion:) withSEL:@selector(swizzled_dismissViewControllerAnimated:completion:)];
     });
 }
-
+/// 页面消失了 发送消息进行检测
 - (void)swizzled_viewDidDisappear:(BOOL)animated {
     [self swizzled_viewDidDisappear:animated];
     
@@ -37,12 +38,14 @@ const void *const kHasBeenPoppedKey = &kHasBeenPoppedKey;
     }
 }
 
+/// 页面出现 设置 pop key = NO
 - (void)swizzled_viewWillAppear:(BOOL)animated {
     [self swizzled_viewWillAppear:animated];
     
     objc_setAssociatedObject(self, kHasBeenPoppedKey, @(NO), OBJC_ASSOCIATION_RETAIN);
 }
 
+/// 页面被关闭调用willDeallocd检测
 - (void)swizzled_dismissViewControllerAnimated:(BOOL)flag completion:(void (^)(void))completion {
     [self swizzled_dismissViewControllerAnimated:flag completion:completion];
     
@@ -60,10 +63,11 @@ const void *const kHasBeenPoppedKey = &kHasBeenPoppedKey;
     if (![super willDealloc]) {
         return NO;
     }
-    
+    /// 收集信息
     [self willReleaseChildren:self.childViewControllers];
     [self willReleaseChild:self.presentedViewController];
     
+    /// 如果已经加载过的 则收集view的stack
     if (self.isViewLoaded) {
         [self willReleaseChild:self.view];
     }

@@ -24,8 +24,11 @@
 static NSMutableSet *leakedObjectPtrs;
 
 @interface MLeakedObjectProxy ()<UIAlertViewDelegate>
+/// 当前对象
 @property (nonatomic, weak) id object;
+/// 当前指针对象值
 @property (nonatomic, strong) NSNumber *objectPtr;
+/// 视图树
 @property (nonatomic, strong) NSArray *viewStack;
 @end
 
@@ -42,6 +45,7 @@ static NSMutableSet *leakedObjectPtrs;
     if (!ptrs.count) {
         return NO;
     }
+    /// 判断是否存在交集
     if ([leakedObjectPtrs intersectsSet:ptrs]) {
         return YES;
     } else {
@@ -51,16 +55,17 @@ static NSMutableSet *leakedObjectPtrs;
 
 + (void)addLeakedObject:(id)object {
     NSAssert([NSThread isMainThread], @"Must be in main thread.");
-    
+    /// 创建proxy
     MLeakedObjectProxy *proxy = [[MLeakedObjectProxy alloc] init];
     proxy.object = object;
     proxy.objectPtr = @((uintptr_t)object);
     proxy.viewStack = [object viewStack];
     static const void *const kLeakedObjectProxyKey = &kLeakedObjectProxyKey;
     objc_setAssociatedObject(object, kLeakedObjectProxyKey, proxy, OBJC_ASSOCIATION_RETAIN);
-    
+    /// 把指针值添加进去
     [leakedObjectPtrs addObject:proxy.objectPtr];
     
+    ///  提示
 #if _INTERNAL_MLF_RC_ENABLED
     [MLeaksMessenger alertWithTitle:@"Memory Leak"
                             message:[NSString stringWithFormat:@"%@", proxy.viewStack]

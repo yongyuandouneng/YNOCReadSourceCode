@@ -19,13 +19,15 @@
 - (BOOL)willDealloc;
 - (void)willReleaseObject:(id)object relationship:(NSString *)relationship;
 
+/// 设置stack 和 parentptrs 和 调用 willDealloc 发送消息
 - (void)willReleaseChild:(id)child;
 - (void)willReleaseChildren:(NSArray *)children;
 
+/// view tree
 - (NSArray *)viewStack;
-
+/// white list
 + (void)addClassNamesToWhitelist:(NSArray *)classNames;
-
+/// swizzle
 + (void)swizzleSEL:(SEL)originalSEL withSEL:(SEL)swizzledSEL;
 
 @end

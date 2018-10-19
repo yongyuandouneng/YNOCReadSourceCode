@@ -12,7 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
+/// 消息弹窗类
 @interface MLeaksMessenger : NSObject
 
 + (void)alertWithTitle:(NSString *)title message:(NSString *)message;
