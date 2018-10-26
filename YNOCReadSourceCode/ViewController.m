@@ -10,8 +10,11 @@
 #import "YYCache.h"
 #import "YYModel.h"
 #import "People.h"
+#import "Typeset.h"
 
 @interface ViewController ()
+
+@property (nonatomic, strong) UILabel *label;
 
 @end
 
@@ -19,14 +22,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-}
-
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
-    People *p = [People yy_modelWithDictionary:@{@"list" : @[@{@"name" : @"1"}, @{@"name" : @"2"}]}];
+    _label = [[UILabel alloc] initWithFrame:CGRectMake(100, 100, 300, 300)];
+    _label.numberOfLines = 0;
+    NSString *a = nil;
+    _label.attributedText = a.typeset.color([UIColor redColor]).string;
     
-    NSLog(@"1");
+    [self.view addSubview:_label];
+    
 }
 
 @end
