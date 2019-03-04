@@ -56,7 +56,7 @@
 
 	RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
 	subscriber = [[RACPassthroughSubscriber alloc] initWithSubscriber:subscriber signal:self disposable:disposable];
-
+    /// 添加到订阅者中
 	NSMutableArray *subscribers = self.subscribers;
 	@synchronized (subscribers) {
 		[subscribers addObject:subscriber];
@@ -77,6 +77,7 @@
 	return disposable;
 }
 
+/// 遍历数组进行调用
 - (void)enumerateSubscribersUsingBlock:(void (^)(id<RACSubscriber> subscriber))block {
 	NSArray *subscribers;
 	@synchronized (self.subscribers) {

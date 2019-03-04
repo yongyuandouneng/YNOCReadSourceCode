@@ -11,10 +11,9 @@
 #import "YYModel.h"
 #import "People.h"
 #import "Typeset.h"
-
+#import "ReactiveObjC.h"
 @interface ViewController ()
 
-@property (nonatomic, strong) UILabel *label;
 
 @end
 
@@ -22,13 +21,39 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+   
+
     
-    _label = [[UILabel alloc] initWithFrame:CGRectMake(100, 100, 300, 300)];
-    _label.numberOfLines = 0;
-    NSString *a = nil;
-    _label.attributedText = a.typeset.color([UIColor redColor]).string;
-    
-    [self.view addSubview:_label];
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+//    RACSignal *signal = [RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            [subscriber sendNext:@"2"];
+//        });
+//        return nil;
+//    }];
+//
+//    [signal subscribeNext:^(id  _Nullable x) {
+//        NSLog(@"1");
+//    }];
+//
+//    [signal subscribeNext:^(id  _Nullable x) {
+//        NSLog(@"2");
+//    }];
+
+    RACSubject *subject = [RACSubject subject];
+    [subject subscribeNext:^(id  _Nullable x) {
+        NSLog(@"------");
+    }];
+    [subject subscribeNext:^(id  _Nullable x) {
+        NSLog(@"======");
+    }];
+    [subject sendNext:@"1"];
+    [subject sendNext:@"3"];
+    [subject subscribeNext:^(id  _Nullable x) {
+        NSLog(@"~~~~~");
+    }];
     
 }
 

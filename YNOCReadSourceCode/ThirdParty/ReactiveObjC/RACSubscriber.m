@@ -62,7 +62,7 @@
 }
 
 #pragma mark RACSubscriber
-
+/// sendNext方法 取出订阅者的next block 进行调用
 - (void)sendNext:(id)value {
 	@synchronized (self) {
 		void (^nextBlock)(id) = [self.next copy];

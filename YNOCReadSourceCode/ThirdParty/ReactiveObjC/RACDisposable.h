@@ -14,6 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// A disposable encapsulates the work necessary to tear down and cleanup a
 /// subscription.
+/*
+ RACDisposable:用于取消订阅或者清理资源，当信号发送完成或者发送错误的时候，就会自动触发它。
+ */
 @interface RACDisposable : NSObject
 
 /// Whether the receiver has been disposed.

@@ -32,21 +32,21 @@
 }
 
 #pragma mark Managing Subscribers
-
+/// 创建订阅者之后调用 订阅者协议的方法
 - (RACDisposable *)subscribe:(id<RACSubscriber>)subscriber {
 	NSCParameterAssert(subscriber != nil);
 
 	RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
 	subscriber = [[RACPassthroughSubscriber alloc] initWithSubscriber:subscriber signal:self disposable:disposable];
 
-	if (self.didSubscribe != NULL) {
-		RACDisposable *schedulingDisposable = [RACScheduler.subscriptionScheduler schedule:^{
-			RACDisposable *innerDisposable = self.didSubscribe(subscriber);
-			[disposable addDisposable:innerDisposable];
-		}];
-
-		[disposable addDisposable:schedulingDisposable];
-	}
+    if (self.didSubscribe != NULL) {
+        RACDisposable *schedulingDisposable = [RACScheduler.subscriptionScheduler schedule:^{
+            RACDisposable *innerDisposable = self.didSubscribe(subscriber);
+            [disposable addDisposable:innerDisposable];
+        }];
+//
+        [disposable addDisposable:schedulingDisposable];
+    }
 	
 	return disposable;
 }

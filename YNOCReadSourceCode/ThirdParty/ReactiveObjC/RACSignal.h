@@ -88,7 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (RACSignal<ValueType> *)startLazilyWithScheduler:(RACScheduler *)scheduler block:(void (^)(id<RACSubscriber> subscriber))block RAC_WARN_UNUSED_RESULT;
 
 @end
-
+#pragma mark - RACStream 父类方法实现 信号处理
 @interface RACSignal<__covariant ValueType> (RACStream)
 
 /// Returns a signal that immediately sends the given value and then completes.
@@ -142,6 +142,7 @@ typedef RACSignal * _Nullable (^RACSignalBindBlock)(ValueType _Nullable value, B
 ///
 /// In cases where instancetype is a valid return type, the operation is not
 /// redeclared here.
+#pragma mark - 信号操作方法中心
 @interface RACSignal<__covariant ValueType> (RACStreamOperations)
 
 /// Maps `block` across the values in the receiver and flattens the result.
@@ -375,7 +376,7 @@ typedef RACSignal * _Nullable (^RACSignalBindBlock)(ValueType _Nullable value, B
 - (RACSignal<ValueType> *)distinctUntilChanged RAC_WARN_UNUSED_RESULT;
 
 @end
-
+#pragma mark - 设置订阅中心 - 创建订阅者(协议)捕获上下文 
 @interface RACSignal<__covariant ValueType> (Subscription)
 
 /// Subscribes `subscriber` to changes on the receiver. The receiver defines which

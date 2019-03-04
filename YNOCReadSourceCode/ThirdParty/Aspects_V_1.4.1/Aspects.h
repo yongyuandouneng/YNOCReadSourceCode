@@ -20,7 +20,7 @@ typedef NS_OPTIONS(NSUInteger, AspectOptions) {
 @protocol AspectToken <NSObject>
 
 /// Deregisters an aspect.
-/// 返回 YES 代表注销成功，f否则返回NO
+/// 返回 YES 代表注销成功，否则返回NO
 - (BOOL)remove;
 
 @end

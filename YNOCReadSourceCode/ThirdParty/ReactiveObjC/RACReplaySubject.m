@@ -56,6 +56,7 @@ const NSUInteger RACReplaySubjectUnlimitedCapacity = NSUIntegerMax;
 
 	RACDisposable *schedulingDisposable = [RACScheduler.subscriptionScheduler schedule:^{
 		@synchronized (self) {
+            /// 如果有数据则执行 sendNext
 			for (id value in self.valuesReceived) {
 				if (compoundDisposable.disposed) return;
 
@@ -84,6 +85,7 @@ const NSUInteger RACReplaySubjectUnlimitedCapacity = NSUIntegerMax;
 
 - (void)sendNext:(id)value {
 	@synchronized (self) {
+        /// 保存发送的数据
 		[self.valuesReceived addObject:value ?: RACTupleNil.tupleNil];
 		[super sendNext:value];
 		

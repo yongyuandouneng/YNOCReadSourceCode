@@ -68,6 +68,7 @@ static const char *cleanedSignalDescription(RACSignal *signal) {
 #pragma mark RACSubscriber
 
 - (void)sendNext:(id)value {
+    /// 判断信号是否已经销毁
 	if (self.disposable.disposed) return;
 
 	if (RACSIGNAL_NEXT_ENABLED()) {

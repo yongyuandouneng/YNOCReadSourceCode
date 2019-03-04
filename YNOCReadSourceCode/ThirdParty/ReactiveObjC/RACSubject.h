@@ -16,6 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// They're most helpful in bridging the non-RAC world to RAC, since they let you
 /// manually control the sending of events.
+/*
+    遵守RACSubscribe协议，就既能发送，又能订阅信号,
+    RACSubject订阅信号的实质就是将内部创建的订阅者保存在订阅者数组self.subscribers中,
+    等待sendNext后进行调用.
+    不能够先sendNext:
+ */
 @interface RACSubject<ValueType> : RACSignal<ValueType> <RACSubscriber>
 
 /// Returns a new subject.

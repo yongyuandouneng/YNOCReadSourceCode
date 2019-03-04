@@ -44,6 +44,7 @@
 		2E0E346C21081EEA0049C68B /* NSString+MJExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E0E346121081EEA0049C68B /* NSString+MJExtension.m */; };
 		2E235E002182B79600492A9A /* TypesetKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E235DEB2182B79500492A9A /* TypesetKit.m */; };
 		2E235E012182B79600492A9A /* TypesetKit+Match.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E235DEC2182B79500492A9A /* TypesetKit+Match.m */; };
+		2E235E0D2182F3C300492A9A /* LEETheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E235E0C2182F3C300492A9A /* LEETheme.m */; };
 		2E289F21217D6A6900F4EA77 /* YYTextUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E289EEE217D6A6800F4EA77 /* YYTextUtilities.m */; };
 		2E289F22217D6A6900F4EA77 /* NSParagraphStyle+YYText.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E289EEF217D6A6800F4EA77 /* NSParagraphStyle+YYText.m */; };
 		2E289F23217D6A6900F4EA77 /* NSAttributedString+YYText.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E289EF0217D6A6800F4EA77 /* NSAttributedString+YYText.m */; };
@@ -362,6 +363,9 @@
 		2E235DEC2182B79500492A9A /* TypesetKit+Match.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TypesetKit+Match.m"; sourceTree = "<group>"; };
 		2E235DF32182B79500492A9A /* Typeset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Typeset.h; sourceTree = "<group>"; };
 		2E235DFB2182B79600492A9A /* TypesetKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypesetKit.h; sourceTree = "<group>"; };
+		2E235E0A2182F3C300492A9A /* LEEThemeHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEEThemeHelper.h; sourceTree = "<group>"; };
+		2E235E0B2182F3C300492A9A /* LEETheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEETheme.h; sourceTree = "<group>"; };
+		2E235E0C2182F3C300492A9A /* LEETheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEETheme.m; sourceTree = "<group>"; };
 		2E289EEE217D6A6800F4EA77 /* YYTextUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTextUtilities.m; sourceTree = "<group>"; };
 		2E289EEF217D6A6800F4EA77 /* NSParagraphStyle+YYText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSParagraphStyle+YYText.m"; sourceTree = "<group>"; };
 		2E289EF0217D6A6800F4EA77 /* NSAttributedString+YYText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+YYText.m"; sourceTree = "<group>"; };
@@ -1041,6 +1045,16 @@
 				2E235DEC2182B79500492A9A /* TypesetKit+Match.m */,
 			);
 			path = Typeset_V_3.4.2;
+			sourceTree = "<group>";
+		};
+		2E235E092182F3C300492A9A /* LEETheme_V.1.1.7 */ = {
+			isa = PBXGroup;
+			children = (
+				2E235E0A2182F3C300492A9A /* LEEThemeHelper.h */,
+				2E235E0B2182F3C300492A9A /* LEETheme.h */,
+				2E235E0C2182F3C300492A9A /* LEETheme.m */,
+			);
+			path = LEETheme_V.1.1.7;
 			sourceTree = "<group>";
 		};
 		2E289EA0217D6A2300F4EA77 /* YYText_V_1.0.7 */ = {
@@ -1753,6 +1767,7 @@
 		2EB3E432208452C6004663FF /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				2E235E092182F3C300492A9A /* LEETheme_V.1.1.7 */,
 				2E235DC82182B78100492A9A /* Typeset_V_3.4.2 */,
 				2E33E0272176DF710097F805 /* MLeaksFinder_V_1.0.0 */,
 				2E33E5E22177474A0097F805 /* PLeakSniffer_V_1.0 */,
@@ -1944,6 +1959,7 @@
 				2E289FEC217D6D8C00F4EA77 /* UITableView+YYAdd.m in Sources */,
 				2E33E5922176F99C0097F805 /* RACKVOChannel.m in Sources */,
 				2E95437E20BCED36000E963C /* MASLayoutConstraint.m in Sources */,
+				2E235E0D2182F3C300492A9A /* LEETheme.m in Sources */,
 				2E33E5D52176F99D0097F805 /* RACDynamicSignal.m in Sources */,
 				2E5162402090201300C7E8AA /* SDWebImageDownloaderOperation.m in Sources */,
 				2E33E5932176F99C0097F805 /* RACSerialDisposable.m in Sources */,
